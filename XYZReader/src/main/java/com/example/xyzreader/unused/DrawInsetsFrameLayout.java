@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.xyzreader.ui;
+package com.example.xyzreader.unused;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -55,6 +55,7 @@ public class DrawInsetsFrameLayout extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
+/*
         final TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.DrawInsetsFrameLayout, defStyle, 0);
         assert a != null;
@@ -62,6 +63,7 @@ public class DrawInsetsFrameLayout extends FrameLayout {
         mInsetBackground = a.getDrawable(R.styleable.DrawInsetsFrameLayout_insetBackground);
 
         a.recycle();
+*/
     }
 
     public void setInsetBackground(Drawable insetBackground) {

@@ -1,5 +1,11 @@
 <resources>
+<!--
     <declare-styleable name="DrawInsetsFrameLayout">
         <attr name="insetBackground" format="color|reference" />
     </declare-styleable>
+-->
+
+    <attr name="colorPrimaryLight" format="reference"/>
+    <!--<attr name="colorAccent" format="reference"/>-->
+
 </resources>
