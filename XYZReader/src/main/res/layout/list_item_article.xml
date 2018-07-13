@@ -8,7 +8,8 @@
     android:layout_marginBottom="4dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="6dp"
+    app:cardCornerRadius="@dimen/card_default_radius"
+    app:cardElevation="@dimen/cardview_default_elevation"
     android:foreground="?selectableItemBackground">
 
     <LinearLayout
@@ -32,6 +33,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerInside"/>
 
+<!--
         <TextView
             android:id="@+id/article_title"
             style="@style/TextAppearance.AppCompat.Subhead"
@@ -45,15 +47,25 @@
             android:text="Lorem Ipsum"
             android:ellipsize="end"
             android:maxLines="4" />
+-->
+        <TextView
+            android:id="@+id/article_title"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="?attr/colorPrimary"
+            android:textColor="@android:color/white"
+            android:text="Lorem Ipsum"
+            android:ellipsize="end"
+            android:maxLines="4" />
 
         <TextView
             android:id="@+id/article_subtitle"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="16dp"
+            android:padding="16dp"
             android:textColor="?attr/colorPrimary"
             android:text="Lorem Ipsum"
             android:maxLines="2"

@@ -1,6 +1,5 @@
 package com.example.xyzreader.ui;
 
-import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,12 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 //import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -54,7 +50,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private Snackbar mSnackbar;
+
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -69,7 +65,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-        mRootLayout = (CoordinatorLayout) findViewById(R.id.list_coordinator_layout);
+        mRootLayout = (CoordinatorLayout) findViewById(R.id.list_layout_root);
         mToolbar = (Toolbar) findViewById(R.id.list_toolbar);
         //final View toolbarContainerView = findViewById(R.id.toolbar_container);
 
@@ -85,6 +81,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
+            mSwipeRefreshLayout.setRefreshing(true);
             refresh();
         }
     }
@@ -109,6 +106,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive:");
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 Log.d(TAG, "onReceive: Is refreshing="+String.valueOf(mIsRefreshing));
@@ -121,8 +119,8 @@ public class ArticleListActivity extends AppCompatActivity implements
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {
                 mSwipeRefreshLayout.setRefreshing(isRefreshing);
-                if (!isRefreshing && mRecyclerView!= null && mRecyclerView.getChildCount() > 0)
-                    snackBarShow("All articles have loaded", false);
+//                if (!isRefreshing && mRecyclerView!= null && mRecyclerView.getChildCount() > 0)
+//                    snackBarShow("All articles have loaded", false);
             }
         }, 500);
     }
@@ -239,18 +237,5 @@ public class ArticleListActivity extends AppCompatActivity implements
         }
     }
 
-    //region Snackbar
-    private void snackBarShow(String message, boolean asIndefinite){
-        mSnackbar = Snackbar.make(mRootLayout, message, asIndefinite?Snackbar.LENGTH_INDEFINITE:Snackbar.LENGTH_SHORT);
-        mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.indigo_700));
-        mSnackbar.setActionTextColor(Color.WHITE);
-        mSnackbar.show();
-    }
-
-    private void snackBarDismiass(){
-        if (mSnackbar != null && mSnackbar.isShown())
-            mSnackbar.dismiss();
-    }
-    //endregion Snackbar
 
 }
