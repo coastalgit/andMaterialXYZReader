@@ -16,10 +16,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
+import android.text.Layout;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -33,7 +36,11 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
+import com.example.xyzreader.common.Constants;
 import com.example.xyzreader.data.ArticleLoader;
+import com.example.xyzreader.unused.ImageLoaderHelper;
+import com.squareup.picasso.Picasso;
+
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -57,7 +64,7 @@ public class ArticleDetailFragment extends Fragment implements
     private ColorDrawable mStatusBarColorDrawable;
 
     private int mTopInset;
-    private View mPhotoContainerView;
+    //private View mPhotoContainerView;
     private ImageView mPhotoView;
     private int mScrollY;
     private boolean mIsCard = false;
@@ -105,7 +112,6 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
         // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
         // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
@@ -141,7 +147,7 @@ public class ArticleDetailFragment extends Fragment implements
 //        });
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
-        mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
+        //mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
@@ -160,6 +166,7 @@ public class ArticleDetailFragment extends Fragment implements
         return mRootView;
     }
 
+/*
     private void updateStatusBar() {
         int color = 0;
         if (mPhotoView != null && mTopInset != 0 && mScrollY > 0) {
@@ -174,7 +181,9 @@ public class ArticleDetailFragment extends Fragment implements
         mStatusBarColorDrawable.setColor(color);
         //mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
     }
+*/
 
+/*
     static float progress(float v, float min, float max) {
         return constrain((v - min) / (max - min), 0, 1);
     }
@@ -188,6 +197,7 @@ public class ArticleDetailFragment extends Fragment implements
             return val;
         }
     }
+*/
 
     private Date parsePublishedDate() {
         try {
@@ -205,13 +215,19 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
+        Typeface typeface_regular = Typeface.createFromAsset(getActivity().getAssets(), Constants.Fonts.FONT_MONTSERRAT_REGULAR);
+        Typeface typeface_light = Typeface.createFromAsset(getActivity().getAssets(), Constants.Fonts.FONT_MONTSERRAT_LIGHT);
+
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
+        titleView.setTypeface(typeface_regular);
+
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
-        bylineView.setMovementMethod(new LinkMovementMethod());
+        bylineView.setTypeface(typeface_light);
+        //bylineView.setMovementMethod(new LinkMovementMethod());
+
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-
-
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
+        //bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
+        bodyView.setTypeface(typeface_regular);
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -237,7 +253,8 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+
+
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
@@ -258,6 +275,26 @@ public class ArticleDetailFragment extends Fragment implements
 
                         }
                     });
+
+/*
+            Picasso.get()
+                    .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+                    .into(mPhotoView);
+*/
+
+            //bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            String body = mCursor.getString(ArticleLoader.Query.BODY);
+/*
+            String body2 = body.replace("\r\n\r\n", "{doublebreak}");
+            String body3 = body2.replace("\r\n", " ");
+            body = body3.replace("{doublebreak}", "\r\n\r\n");
+*/
+            //bodyView.setText(body.replace("(\r\n|\n)","<br />"));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                bodyView.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+            }
+            bodyView.setText(body);
+
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
@@ -296,6 +333,7 @@ public class ArticleDetailFragment extends Fragment implements
         bindViews();
     }
 
+/*
     public int getUpButtonFloor() {
         if (mPhotoContainerView == null || mPhotoView.getHeight() == 0) {
             return Integer.MAX_VALUE;
@@ -306,4 +344,5 @@ public class ArticleDetailFragment extends Fragment implements
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
     }
+*/
 }
