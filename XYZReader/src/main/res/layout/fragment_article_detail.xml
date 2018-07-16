@@ -147,9 +147,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
-
-
                 <com.example.xyzreader.unused.MaxWidthLinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -160,7 +157,7 @@
                     android:elevation="2dp">
 
                     <TextView
-                        android:id="@+id/article_body"
+                        android:id="@+id/article_body1"
                         style="?android:attr/textAppearanceMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -173,6 +170,30 @@
                         android:textSize="@dimen/detail_body_text_size"
                         />
                     <!--android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"-->
+                    <Button
+                        android:id="@+id/btn_article_loadmore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/detail_inner_horiz_margin"
+                        android:layout_marginBottom="@dimen/detail_inner_horiz_margin"
+                        android:background="?attr/colorPrimary"
+                        android:textColor="@color/white"
+                        android:text="Load more"/>
+
+                    <TextView
+                        android:id="@+id/article_body2"
+                        android:visibility="gone"
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/detail_inner_horiz_margin"
+                        android:layout_marginRight="@dimen/detail_inner_horiz_margin"
+                        android:paddingTop="@dimen/detail_metabar_vert_padding"
+                        android:paddingBottom="@dimen/detail_metabar_vert_padding"
+                        android:textColor="@color/bluegrey_900"
+                        android:textColorLink="?attr/colorAccent"
+                        android:textSize="@dimen/detail_body_text_size"
+                        />
 
                 </com.example.xyzreader.unused.MaxWidthLinearLayout>
 
@@ -185,6 +206,7 @@
 
 <!--    </FrameLayout>-->
 
+<!--
     <ImageButton android:id="@+id/share_fab"
         android:stateListAnimator="@anim/fab_state_list_anim"
         android:background="@drawable/add_fab_background"
@@ -196,7 +218,24 @@
         android:src="@drawable/ic_share"
         android:elevation="@dimen/fab_elevation"
         android:contentDescription="@string/action_share" />
+-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/share_fab"
 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_gravity="right|bottom"
+        app:fabSize="normal"
+        app:borderWidth="0dp"
+        app:backgroundTint="?attr/colorAccent"
+
+
+        app:srcCompat="@drawable/baseline_share_white_24"/>
+    <!--android:elevation="?attr/cardElevation"-->
+    <!--android:contentDescription="@string/action_share"-->
 </android.support.design.widget.CoordinatorLayout>
+
 
 <!--</android.support.design.widget.CoordinatorLayout>-->

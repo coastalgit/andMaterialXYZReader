@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -46,9 +47,9 @@ public class ArticleDetailActivity extends AppCompatActivity
     //private View mUpButtonContainer;
     //private View mUpButton;
 
-    //private CoordinatorLayout mRootLayout;
-    private FrameLayout mRootLayout;
-    private Snackbar mSnackbar;
+    private CoordinatorLayout mRootLayout;
+    //private FrameLayout mRootLayout;
+
     private Toolbar mToolbar;
 
     @Override
@@ -65,7 +66,8 @@ public class ArticleDetailActivity extends AppCompatActivity
             postponeEnterTransition();
         }
 
-        mRootLayout = (FrameLayout)  findViewById(R.id.detail_layout_root);
+        //mRootLayout = (FrameLayout)  findViewById(R.id.detail_layout_root);
+        mRootLayout = (CoordinatorLayout)  findViewById(R.id.detail_layout_root);
         getLoaderManager().initLoader(0, null, this);
 
         mToolbar = findViewById(R.id.detail_toolbar);
@@ -140,7 +142,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        snackBarShow("Loading", true);
+        //snackBarShow("Loading", true);
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
@@ -150,7 +152,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPagerAdapter.notifyDataSetChanged();
 
         //if (mPager!= null && mPager.getChildCount() > 0)
-        snackBarDismiass();
+        //snackBarDismiass();
 
         // Select the start ID
         if (mStartId > 0) {
@@ -219,18 +221,5 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
     }
 
-    //region Snackbar
-    private void snackBarShow(String message, boolean asIndefinite){
-        mSnackbar = Snackbar.make(mRootLayout, message, asIndefinite?Snackbar.LENGTH_INDEFINITE:Snackbar.LENGTH_SHORT);
-        mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.deeporange_A200));
-        mSnackbar.setActionTextColor(Color.WHITE);
-        mSnackbar.show();
-    }
-
-    private void snackBarDismiass(){
-        if (mSnackbar != null && mSnackbar.isShown())
-            mSnackbar.dismiss();
-    }
-    //endregion Snackbar
 
 }

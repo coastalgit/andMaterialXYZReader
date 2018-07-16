@@ -7,7 +7,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 
@@ -18,19 +17,21 @@ import java.util.GregorianCalendar;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.Layout;
 import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -53,6 +54,7 @@ public class ArticleDetailFragment extends Fragment implements
 
     public static final String ARG_ITEM_ID = "item_id";
     private static final float PARALLAX_FACTOR = 1.25f;
+    private static final int BODY_SPLIT_VALUE = 1000;
 
     private Cursor mCursor;
     private long mItemId;
@@ -75,6 +77,16 @@ public class ArticleDetailFragment extends Fragment implements
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+
+    private FloatingActionButton mFAB;
+    private Snackbar mSnackbar;
+    private String mBodyPart1, mBodyPart2;
+    private TextView mBodyView1, mBodyView2;
+    private Button mBtnLoadMore;
+
+    private Typeface mTypeface_regular;
+    private Typeface mTypeface_light;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -123,6 +135,10 @@ public class ArticleDetailFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
+
+        mTypeface_regular = Typeface.createFromAsset(getActivity().getAssets(), Constants.Fonts.FONT_MONTSERRAT_REGULAR);
+        mTypeface_light = Typeface.createFromAsset(getActivity().getAssets(), Constants.Fonts.FONT_MONTSERRAT_LIGHT);
+
 /*
         mDrawInsetsFrameLayout = (DrawInsetsFrameLayout)
                 mRootView.findViewById(R.id.draw_insets_frame_layout);
@@ -151,7 +167,8 @@ public class ArticleDetailFragment extends Fragment implements
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+        mFAB = (FloatingActionButton) mRootView.findViewById(R.id.share_fab);
+        mFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
@@ -160,6 +177,17 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
+
+        mBodyView1 = (TextView) mRootView.findViewById(R.id.article_body1);
+        mBodyView1.setTypeface(mTypeface_regular);
+        mBodyView2 = (TextView) mRootView.findViewById(R.id.article_body2);
+        mBodyView2.setTypeface(mTypeface_regular);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mBodyView1.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+            mBodyView2.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+        }
+
+        mBtnLoadMore = (Button) mRootView.findViewById(R.id.btn_article_loadmore);
 
         bindViews();
         //updateStatusBar();
@@ -215,19 +243,28 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        Typeface typeface_regular = Typeface.createFromAsset(getActivity().getAssets(), Constants.Fonts.FONT_MONTSERRAT_REGULAR);
-        Typeface typeface_light = Typeface.createFromAsset(getActivity().getAssets(), Constants.Fonts.FONT_MONTSERRAT_LIGHT);
-
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
-        titleView.setTypeface(typeface_regular);
+        titleView.setTypeface(mTypeface_regular);
 
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
-        bylineView.setTypeface(typeface_light);
+        bylineView.setTypeface(mTypeface_light);
         //bylineView.setMovementMethod(new LinkMovementMethod());
 
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-        //bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
-        bodyView.setTypeface(typeface_regular);
+        mBtnLoadMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //((ArticleDetailActivity)getActivity()).snackBarShow("Loading",false);
+                snackBarShow("Loading", false);
+                mBtnLoadMore.setVisibility(View.GONE);
+                mBodyView2.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBodyView2.setText(mBodyPart2);
+                    }
+                }, 1000);
+            }
+        });
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -249,10 +286,11 @@ public class ArticleDetailFragment extends Fragment implements
                 // If date is before 1902, just show the string
                 bylineView.setText(Html.fromHtml(
                         outputFormat.format(publishedDate) + " by <font color='#ffffff'>"
-                        + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                                + mCursor.getString(ArticleLoader.Query.AUTHOR)
                                 + "</font>"));
 
             }
+
 
 
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
@@ -276,31 +314,41 @@ public class ArticleDetailFragment extends Fragment implements
                         }
                     });
 
-/*
-            Picasso.get()
-                    .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
-                    .into(mPhotoView);
-*/
 
             //bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
             String body = mCursor.getString(ArticleLoader.Query.BODY);
-/*
-            String body2 = body.replace("\r\n\r\n", "{doublebreak}");
+            String body2 = body.replace("\r\n\r\n", "{rn}");
             String body3 = body2.replace("\r\n", " ");
-            body = body3.replace("{doublebreak}", "\r\n\r\n");
-*/
-            //bodyView.setText(body.replace("(\r\n|\n)","<br />"));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                bodyView.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
+            body = body3.replace("{rn}", "\r\n\r\n");
+            //Log.d(TAG, "bindViews: body length:"+String.valueOf(body.length()));
+            if (body.length() > BODY_SPLIT_VALUE){
+                mBodyPart1 = body.substring(0, BODY_SPLIT_VALUE);
+                mBodyPart2 = body.substring(BODY_SPLIT_VALUE + 1, body.length() - 1);
+                mBtnLoadMore.setVisibility(View.VISIBLE);
             }
-            bodyView.setText(body);
+            else {
+                mBodyPart1 = body;
+                mBodyPart2 = "";
+                mBtnLoadMore.setVisibility(View.INVISIBLE);
+                mBodyView2.setVisibility(View.GONE);
+            }
+
+            mBodyView1.setText(mBodyPart1);
+
+//            Picasso.get()
+//                    .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+//                    .into(mPhotoView);
+
 
         } else {
             mRootView.setVisibility(View.GONE);
+            if (mBtnLoadMore != null)
+                mBtnLoadMore.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A" );
-            bodyView.setText("N/A");
+            mBodyView1.setText("N/A");
         }
+
     }
 
     @Override
@@ -345,4 +393,26 @@ public class ArticleDetailFragment extends Fragment implements
                 : mPhotoView.getHeight() - mScrollY;
     }
 */
+
+    //region Snackbar
+    public void snackBarShow(final String message, final boolean asIndefinite){
+        final int bgcolor = ContextCompat.getColor(getActivity(), R.color.deeporange_A200);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+                mSnackbar = Snackbar.make(mRootView, message, asIndefinite?Snackbar.LENGTH_INDEFINITE:Snackbar.LENGTH_SHORT);
+                mSnackbar.getView().setBackgroundColor(bgcolor);
+                mSnackbar.setActionTextColor(Color.WHITE);
+                mSnackbar.show();
+//            }
+//        }, 1000);
+
+    }
+
+    public void snackBarDismiass(){
+        if (mSnackbar != null && mSnackbar.isShown())
+            mSnackbar.dismiss();
+    }
+    //endregion Snackbar
+
 }
