@@ -25,12 +25,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.xyzreader.R;
 import com.example.xyzreader.common.Constants;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
-import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -134,7 +134,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Adapter adapter = new Adapter(cursor);
+        Adapter adapter = new Adapter(cursor, this);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
@@ -150,8 +150,10 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
+        private Context mContext;
 
-        public Adapter(Cursor cursor) {
+        public Adapter(Cursor cursor, Context context) {
+            mContext = context;
             mCursor = cursor;
         }
 
@@ -210,8 +212,8 @@ public class ArticleListActivity extends AppCompatActivity implements
             } else {
                 holder.subtitleView.setText(Html.fromHtml(
                         outputFormat.format(publishedDate)
-                        + "<br/>" + " by "
-                        + mCursor.getString(ArticleLoader.Query.AUTHOR)));
+                                + "<br/>" + " by "
+                                + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             }
 
             holder.subtitleView.setTypeface(typeface_regular);
@@ -221,12 +223,46 @@ public class ArticleListActivity extends AppCompatActivity implements
 //                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
 //            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
 
+/*
             Picasso.get()
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                     .into(holder.thumbnailView);
+*/
+/*
+            Picasso.with(mContext)
+                    .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
+                    .into(holder.thumbnailView);
+*/
+
+            Glide.with(mContext.getApplicationContext())
+                    .asBitmap()
+                    .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+/*
+                        .listener(new RequestListener<Bitmap>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                                Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
+                                    @Override
+                                    public void onGenerated(@NonNull Palette palette) {
+                                        if (palette.getDominantSwatch() != null) {
+                                            cvDetailLand.setCardBackgroundColor(palette.getDominantSwatch().getRgb());
+                                            articleTitleLand.setTextColor(palette.getDominantSwatch().getBodyTextColor());
+                                        }
+                                    }
+                                });
+
+                                return false;
+                            }
+                        })
+*/
+                    .into(holder.thumbnailView);
 
         }
-
         @Override
         public int getItemCount() {
             return mCursor.getCount();
