@@ -7,23 +7,14 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v13.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 //import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowInsets;
-import android.widget.FrameLayout;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -32,26 +23,20 @@ import com.example.xyzreader.data.ItemsContract;
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
+@SuppressWarnings({"FieldCanBeLocal", "deprecation"})
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private Cursor mCursor;
     private long mStartId;
 
-    private long mSelectedItemId;
-    private int mSelectedItemUpButtonFloor = Integer.MAX_VALUE;
-    private int mTopInset;
-
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
-    //private View mUpButtonContainer;
-    //private View mUpButton;
-
-    //private CoordinatorLayout mRootLayout;
-    private FrameLayout mRootLayout;
+    //private FrameLayout mRootLayout;
 
     private Toolbar mToolbar;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,41 +51,38 @@ public class ArticleDetailActivity extends AppCompatActivity
             postponeEnterTransition();
         }
 
-        mRootLayout = (FrameLayout)  findViewById(R.id.detail_layout_root);
+        //mRootLayout = (FrameLayout)  findViewById(R.id.detail_layout_root);
         //mRootLayout = (CoordinatorLayout)  findViewById(R.id.detail_layout_root);
         getLoaderManager().initLoader(0, null, this);
 
         mToolbar = findViewById(R.id.detail_toolbar);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
+            //noinspection ConstantConditions
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             mToolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         }
 
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
-        mPager = (ViewPager) findViewById(R.id.detail_pager);
+        mPager = findViewById(R.id.detail_pager);
         mPager.setAdapter(mPagerAdapter);
 
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-            }
 
             @Override
             public void onPageSelected(int position) {
                 if (mCursor != null) {
                     mCursor.moveToPosition(position);
                 }
-                mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
+                //mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
             }
         });
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
-                mSelectedItemId = mStartId;
+                //mSelectedItemId = mStartId;
             }
         }
 
@@ -138,16 +120,20 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPagerAdapter.notifyDataSetChanged();
     }
 
+    @SuppressWarnings("deprecation")
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
-        public MyPagerAdapter(FragmentManager fm) {
+        @SuppressWarnings("deprecation")
+        MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
+/*
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
             super.setPrimaryItem(container, position, object);
-            ArticleDetailFragment fragment = (ArticleDetailFragment) object;
+            //ArticleDetailFragment fragment = (ArticleDetailFragment) object;
         }
+*/
 
         @Override
         public Fragment getItem(int position) {

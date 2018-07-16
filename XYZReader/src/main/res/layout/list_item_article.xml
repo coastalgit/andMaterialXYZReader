@@ -1,5 +1,6 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="4dp"
@@ -58,7 +59,8 @@
             android:textColor="@android:color/white"
             android:text="Lorem Ipsum"
             android:ellipsize="end"
-            android:maxLines="4" />
+            android:maxLines="4"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/article_subtitle"
@@ -69,7 +71,8 @@
             android:textColor="?attr/colorPrimary"
             android:text="Lorem Ipsum"
             android:maxLines="2"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

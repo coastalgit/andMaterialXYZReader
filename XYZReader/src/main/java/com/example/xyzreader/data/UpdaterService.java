@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.text.format.Time;
 import android.util.Log;
 
 import com.example.xyzreader.remote.RemoteEndpointUtil;
@@ -20,6 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+@SuppressWarnings({"deprecation", "Convert2Diamond"})
 public class UpdaterService extends IntentService {
     private static final String TAG = "UpdaterService";
 
@@ -32,9 +32,10 @@ public class UpdaterService extends IntentService {
         super(TAG);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onHandleIntent(Intent intent) {
-        Time time = new Time();
+        //Time time = new Time();
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();

@@ -20,6 +20,7 @@ public class ArticleLoader extends CursorLoader {
         super(context, uri, Query.PROJECTION, null, null, ItemsContract.Items.DEFAULT_SORT);
     }
 
+    @SuppressWarnings("unused")
     public interface Query {
         String[] PROJECTION = {
                 ItemsContract.Items._ID,

@@ -34,8 +34,4 @@
             <item name="colorAccent">@color/deeporange_A200</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
-    </style>
-
 </resources>
