@@ -136,6 +136,7 @@
         android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_gravity="end|bottom"
+        android:elevation="@dimen/fab_elevation"
         app:fabSize="normal"
         app:borderWidth="0dp"
         app:backgroundTint="?attr/colorAccent"
